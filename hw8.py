@@ -2,14 +2,17 @@ from datetime import datetime, timedelta
 
 
 def get_birthdays_per_week(users):
+
     birthdays = {}
     today = datetime.now().date()
     monday = today - timedelta(days=today.weekday())
+
     for user in users:
         birthday = user['birthday'].date().replace(year=today.year)
         if birthday < today:
             birthday = birthday.replace(year=today.year + 1)
         weekday = birthday.weekday()
+
         if weekday >= 5:
             weekday = 0
         else:
@@ -18,12 +21,10 @@ def get_birthdays_per_week(users):
         if birthday_day not in birthdays:
             birthdays[birthday_day] = []
         birthdays[birthday_day].append(user['name'])
-    for i in range(7):
-        day = monday + timedelta(days=i)
+    ordered_birthdays = sorted(birthdays.items(), key=lambda x: x[0])
+    for day, names in ordered_birthdays:
         day_name = day.strftime('%A')
-        if day in birthdays:
-            names = ', '.join(birthdays[day])
-            print(f'{day_name}: {names}')
+        print(f'{day_name}: {", ".join(names)}')
 
 
 users = [
