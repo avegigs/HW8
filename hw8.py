@@ -2,33 +2,29 @@ from datetime import datetime, timedelta
 
 
 def get_birthdays_per_week(users):
+    today = datetime.today()
+    weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+    for i in range(5):
+        day = today + timedelta(days=i)
+        print(f"{weekdays[i]}:", end=" ")
+        for user in users:
+            birthday = user["birthday"]
+            if (birthday.month, birthday.day) == (day.month, day.day):
+                print(user["name"], end=", ")
+            elif birthday.year < today.year or (birthday.year == today.year and birthday.date() < today.date()):
+                birthday = birthday.replace(year=today.year + 1)
+                if birthday.weekday() == 5:
+                    birthday += timedelta(days=2)
+                elif birthday.weekday() == 6:
+                    birthday += timedelta(days=1)
+                if (birthday.month, birthday.day) == (day.month, day.day):
+                    print(user["name"], end=", ")
+        print()
 
-    birthdays = {}
-    today = datetime.now().date()
-    monday = today - timedelta(days=today.weekday())
-
-    for user in users:
-        birthday = user['birthday'].date().replace(year=today.year)
-        if birthday < today:
-            birthday = birthday.replace(year=today.year + 1)
-        weekday = birthday.weekday()
-
-        if weekday >= 5:
-            weekday = 0
-        else:
-            weekday += 1
-        birthday_day = monday + timedelta(days=weekday)
-        if birthday_day not in birthdays:
-            birthdays[birthday_day] = []
-        birthdays[birthday_day].append(user['name'])
-    ordered_birthdays = sorted(birthdays.items(), key=lambda x: x[0])
-    for day, names in ordered_birthdays:
-        day_name = day.strftime('%A')
-        print(f'{day_name}: {", ".join(names)}')
 
 
 users = [
-    {'name': 'Alice', 'birthday': datetime(2000, 4, 22)},
+    {'name': 'Alice', 'birthday': datetime(2023, 4, 25)},
     {'name': 'Bob', 'birthday': datetime(1985, 9, 1)},
     {'name': 'Charlie', 'birthday': datetime(1995, 12, 31)},
     {'name': 'David', 'birthday': datetime(1970, 2, 14)},
